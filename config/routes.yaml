@@ -1,0 +1,14 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+index:
+    path: /
+    controller: App\Controller\ClientsController::index
+
+show:
+    path: /clients/{id}
+    controller: App\Controller\ClientsController::show
+
+delete:
+    path: /clients/delete/{id}
+    controller: App\Controller\ClientsController::delete
