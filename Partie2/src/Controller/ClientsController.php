@@ -76,80 +76,71 @@ class ClientsController extends AbstractController
 
    
     }
-
+ // Modifier les données d'un client
     public function show(Request $request, int $id)
     {
-      $clients = $this->getDoctrine()
+      $client = $this->getDoctrine()
       ->getRepository(Clients::class)
-        ->findById($id);
-        $form = $this->get('form.factory')->createBuilder(FormType::class, $clients)
+        ->find($id);
+        //générer le formulaire et remplir directement
+        $form = $this->get('form.factory')->createBuilder(FormType::class, $client)
         ->add('genre', ChoiceType::class, [
           'choices' => [
             'Homme' => 'Homme',
             'Femme' => 'Femme'
           ],
-          'expanded' => true
+          'expanded' => true,
+          'data' => $client->getGenre()
         ])
-        ->add('nom',      TextType::class)
-        ->add('prenom',     TextType::class)
-        ->add('email',     EmailType::class)
-        ->add('numero_de_telephone',   NumberType::class)
-        ->add('ville',    TextType::class)
+        ->add('nom',      TextType::class, ['data' => $client->getNom()])
+        ->add('prenom',     TextType::class, ['data' => $client->getPrenom()])
+        ->add('email',     EmailType::class, ['data' => $client->getEmail()])
+        ->add('numero_de_telephone',   NumberType::class, ['data' => $client->getNumeroDeTelephone()])
+        ->add('ville',    TextType::class, ['data' => $client->getVille()])
         ->add('situation', ChoiceType::class, [
           'choices' => [
             'Célibataire' => 'Célibataire',
             'Marié' => 'Marié',
-            'Divorcé' => 'Divorcé'
-          ]
+            'Divorcé' => 'Divorcé',
+          ],
+          'data' => $client->getSituation()
         ])
-        ->add('Modifier', SubmitType::class);
-        $form->addEventListener(
-          FormEvents::POST_SUBMIT,
-          function(FormEvent $event) {
-              $form = $event->getForm();
-              $data = $form->getData();
-              var_dump($data);
-              die("end");
-          }
-      );
-    
-      return $this->render('clients/list.html.twig', array(
+        ->add('Modifier', SubmitType::class)
+        ->getForm();
+
+        if ($request->isMethod('POST')) {
+          $form->handleRequest($request);
+
+        // On vérifie que les valeurs entrées sont correctes
+        if ($form->isValid()) {
+        // modifier les données
+          $client->setGenre($form["genre"]->getData());
+          $client->setNom($form["nom"]->getData());
+          $client->setPrenom($form["prenom"]->getData());
+          $client->setEmail($form["email"]->getData());
+          $client->setNumeroDeTelephone($form["numero_de_telephone"]->getData());
+          $client->setVille($form["ville"]->getData());
+          $client->setSituation($form["situation"]->getData());
+          $this->getDoctrine()->getManager()->flush();
+          return $this->redirectToRoute('index');
+        }
+        }
+    //rediriger sur la page d'accueil
+      return $this->render('clients/show.html.twig', array(
         'form' => $form->createView(),
-        'clients' => $clients,
       ));
 
     }
-
-    public function delete(Request $request, int $id)
+// Action pour supprimer un client
+    public function delete(int $id)
     {
-      $clients = $this->getDoctrine()
+      $client = $this->getDoctrine()
       ->getRepository(Clients::class)
-        ->findById($id);
-        $form = $this->get('form.factory')->createBuilder(FormType::class, $clients)
-        ->add('genre', ChoiceType::class, [
-          'choices' => [
-            'Homme' => 'Homme',
-            'Femme' => 'Femme'
-          ],
-          'expanded' => true
-        ])
-        ->add('nom',      TextType::class)
-        ->add('prenom',     TextType::class)
-        ->add('email',     EmailType::class)
-        ->add('numero_de_telephone',   NumberType::class)
-        ->add('ville',    TextType::class)
-        ->add('situation', ChoiceType::class, [
-          'choices' => [
-            'Célibataire' => 'Célibataire',
-            'Marié' => 'Marié',
-            'Divorcé' => 'Divorcé'
-          ]
-        ])
-        ->add('Delete', SubmitType::class)
-        ->getForm();
-        return $this->render('clients/delete.html.twig', array(
-          'form' => $form->createView(),
-        ));
+        ->find($id);
+      $entitymanager=$this->getDoctrine()->getManager();
+      $entitymanager->remove($client);
+      $entitymanager->flush();
+        return $this->redirectToRoute('index');
   
     }
 }

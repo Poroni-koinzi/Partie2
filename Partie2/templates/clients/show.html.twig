@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un client{% endblock %}
+
+{% block body %}
+<style>
+  .container {
+  /* Uniquement centrer le formulaire sur la page */
+  margin: 0 auto;
+  width: 400px;
+  /* Encadré pour voir les limites du formulaire */
+  padding: 1em;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+}
+
+form div + div {
+  margin-top: 1em;
+}
+
+label {
+  /* Pour être sûrs que toutes les étiquettes ont même taille et sont correctement alignées */
+  display: inline-block;
+  width: 90px;
+  text-align: right;
+}
+
+input {
+    
+  /* Pour s'assurer que tous les champs texte ont la même police.
+     Par défaut */
+  font: 1em sans-serif;
+
+  /* Pour que tous les champs texte aient la même dimension */
+  width: 300px;
+  height: 30px;
+  margin-left: 5px;
+  box-sizing: border-box;
+
+  /* Pour harmoniser le look & feel des bordures des champs texte */
+  border: 1px solid #999;
+}
+
+input:focus {
+  /* Pour souligner légèrement les éléments actifs */
+  border-color: #000;
+}
+
+select{
+   /* Pour s'assurer que tous les champs texte ont la même police.
+     Par défaut */
+  font: 1em sans-serif;
+
+  /* Pour que tous les champs texte aient la même dimension */
+  width: 200px;
+  height: 30px;
+  box-sizing: border-box;
+  /* Pour souligner légèrement les éléments actifs */
+  border-color: #000;
+  /* Pour harmoniser le look & feel des bordures des champs texte */
+  border: 1px solid #999;
+}
+table
+{
+    border-collapse: collapse;
+}
+td, th 
+{
+    border: 1px solid black;
+}
+
+.bottom{
+   margin-left: 0px;
+  width: 200px;
+  height: 30px;
+  background-color: yellow;
+}
+
+
+</style>
+<div class="container">
+  <h1 style="margin-left: 20px;"> Le formulaire</h1>
+    {{ form_start(form) }}
+    {{ form_widget(form.genre) }}
+    {{ form_row(form.nom) }}
+    {{ form_row(form.prenom) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.numero_de_telephone) }}
+     {{ form_row(form.ville) }}
+      {{ form_row(form.situation) }}
+      <br /> <br />
+    {{ form_widget(form.Modifier, {'attr': {'class': 'bottom'}}) }}
+    {{ form_end(form) }}
+</div>
+</div>
+{% endblock %}
